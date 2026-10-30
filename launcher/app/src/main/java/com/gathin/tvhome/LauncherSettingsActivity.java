@@ -40,6 +40,8 @@ public final class LauncherSettingsActivity extends Activity {
     private TextView sharinganSensitivityChoice;
     private TextView sharinganSpotlightIntensityChoice;
     private TextView sharinganClockChoice;
+    private TextView sharinganTileTransparencyChoice;
+    private TextView sharinganKeepAwakeChoice;
     private TextView sharinganResetChoice;
     private TextView animationsChoice;
     private TextView advancedChoice;
@@ -57,6 +59,8 @@ public final class LauncherSettingsActivity extends Activity {
     private int sharinganSensitivity;
     private int sharinganSpotlightIntensity;
     private boolean sharinganClock;
+    private int sharinganTileTransparency;
+    private boolean sharinganKeepAwake;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -131,6 +135,8 @@ public final class LauncherSettingsActivity extends Activity {
         sharinganSensitivity = choices.getInt("sharingan_sensitivity", 2);
         sharinganSpotlightIntensity = choices.getInt("sharingan_spotlight_intensity", 2);
         sharinganClock = choices.getBoolean("sharingan_show_clock", true);
+        sharinganTileTransparency = choices.getInt("sharingan_tile_transparency", 2);
+        sharinganKeepAwake = choices.getBoolean("sharingan_keep_awake", true);
 
         sharinganEyeTrackingChoice = findViewById(R.id.sharinganEyeTrackingChoice);
         sharinganEyeTrackingChoice.setOnClickListener(v -> {
@@ -188,6 +194,22 @@ public final class LauncherSettingsActivity extends Activity {
             refresh();
         });
 
+        sharinganTileTransparencyChoice = findViewById(R.id.sharinganTileTransparencyChoice);
+        sharinganTileTransparencyChoice.setOnClickListener(v -> {
+            sharinganTileTransparency = (sharinganTileTransparency + 1) % 4;
+            choices.edit().putInt("sharingan_tile_transparency", sharinganTileTransparency).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganKeepAwakeChoice = findViewById(R.id.sharinganKeepAwakeChoice);
+        sharinganKeepAwakeChoice.setOnClickListener(v -> {
+            sharinganKeepAwake = !sharinganKeepAwake;
+            choices.edit().putBoolean("sharingan_keep_awake", sharinganKeepAwake).apply();
+            changed();
+            refresh();
+        });
+
         sharinganResetChoice = findViewById(R.id.sharinganResetChoice);
         sharinganResetChoice.setOnClickListener(v -> {
             choices.edit()
@@ -198,6 +220,8 @@ public final class LauncherSettingsActivity extends Activity {
                     .putInt("sharingan_sensitivity", 2)
                     .putInt("sharingan_spotlight_intensity", 2)
                     .putBoolean("sharingan_show_clock", true)
+                    .putInt("sharingan_tile_transparency", 0)
+                    .putBoolean("sharingan_keep_awake", true)
                     .apply();
             sharinganEyeTracking = true;
             sharinganBlinking = true;
@@ -206,6 +230,8 @@ public final class LauncherSettingsActivity extends Activity {
             sharinganSensitivity = 2;
             sharinganSpotlightIntensity = 2;
             sharinganClock = true;
+            sharinganTileTransparency = 0;
+            sharinganKeepAwake = true;
             changed();
             refresh();
             Toast.makeText(this, R.string.sharingan_reset_applied, Toast.LENGTH_SHORT).show();
@@ -419,6 +445,14 @@ public final class LauncherSettingsActivity extends Activity {
 
         sharinganClockChoice.setText(getString(R.string.sharingan_clock_state,
                 getString(sharinganClock ? R.string.shown : R.string.hidden)));
+
+        String transLabel = sharinganTileTransparency == 3 ? getString(R.string.transparency_glass)
+                : (sharinganTileTransparency == 2 ? getString(R.string.transparency_translucent)
+                : (sharinganTileTransparency == 1 ? getString(R.string.transparency_subtle) : getString(R.string.transparency_opaque)));
+        sharinganTileTransparencyChoice.setText(getString(R.string.sharingan_tile_transparency_state, transLabel));
+
+        sharinganKeepAwakeChoice.setText(getString(R.string.sharingan_keep_awake_state,
+                getString(sharinganKeepAwake ? R.string.on : R.string.off)));
         openOnStartChoice.setText(getString(R.string.open_on_start_state, openOnStartLabel()));
         followThemeChoice.setSelected(!hasOnTvChoices());
     }

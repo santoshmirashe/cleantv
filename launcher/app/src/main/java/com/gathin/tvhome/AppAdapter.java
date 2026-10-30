@@ -221,6 +221,18 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     /** Packages drawn from their icon and name even when they have a banner (config.xml icon_tiles). */
     private final Set<String> iconTiles;
     private final List<Entry> items = new ArrayList<>();
+    private float unfocusedTileAlpha = 0.50f;
+
+    public void setTileTransparency(int level) {
+        switch (level) {
+            case 1: unfocusedTileAlpha = 0.75f; break;
+            case 2: unfocusedTileAlpha = 0.50f; break;
+            case 3: unfocusedTileAlpha = 0.25f; break;
+            case 0:
+            default: unfocusedTileAlpha = 1.0f; break;
+        }
+        notifyDataSetChanged();
+    }
 
     AppAdapter(Context ctx, TileListener listener, int dockSize, Config cfg) {
         this.ctx = ctx;
@@ -480,6 +492,8 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         h.name.setVisibility(dockKind && restNameAlpha == 0f ? View.INVISIBLE : View.VISIBLE);
         h.inDock = dockKind;
         boolean focused = h.card.isFocused();   // a rebind after reload() can hit the focused tile
+        h.unfocusedAlpha = unfocusedTileAlpha;
+        h.card.setAlpha(focused ? 1f : unfocusedTileAlpha);
         h.name.setAlpha(focused ? 1f : restNameAlpha);
         h.card.setScaleX(focused && animations ? focusScale() : 1f);
         h.card.setScaleY(focused && animations ? focusScale() : 1f);
@@ -909,6 +923,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         /** Alpha of the name while the tile is not focused (always_show_names). */
         final float restNameAlpha;
         final boolean overshoot;
+        float unfocusedAlpha = 1.0f;
         /** A dock tile: it grows in place without advanced_effects' lift, which reads as off-centre in the band (#2135). */
         boolean inDock;
 
@@ -949,11 +964,13 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 view.animate().cancel();
                 banner.animate().cancel();
                 name.animate().cancel();
-                float scale = !animations ? 1f : advancedEffects ? 1.12f : 1.10f;
+                float scale = !animations ? 1f : 1.18f;
                 float s = focused ? scale : 1f;
+                float targetAlpha = focused ? 1f : unfocusedAlpha;
                 if (!animations) {
                     view.setScaleX(1f);
                     view.setScaleY(1f);
+                    view.setAlpha(targetAlpha);
                     view.setTranslationY(0f);
                     view.setTranslationZ(0f);
                     banner.setScaleX(1f);
@@ -964,6 +981,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     // A short zoom with no hardware layer: building a layer for so short an animation costs more
                     // frames than it saves. The name just appears instead of fading.
                     view.animate().scaleX(s).scaleY(s)
+                            .alpha(targetAlpha)
                             .translationY(focused && advancedEffects && !inDock ? -4f * density : 0f)
                             .translationZ(focused && advancedEffects ? 8f * density : 0f)
                             .setDuration(focused ? Motion.REDUCED_MS : 60)
@@ -976,6 +994,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     if (focused) name.setTranslationY(density * 4f);
                 } else {
                     view.animate().scaleX(s).scaleY(s)
+                            .alpha(targetAlpha)
                             .translationY(focused && advancedEffects && !inDock ? -4f * density : 0f)
                             .translationZ(focused && advancedEffects ? 8f * density : 0f)
                             .setDuration(advancedEffects ? (focused ? 220 : 170) : (focused ? 260 : 180))

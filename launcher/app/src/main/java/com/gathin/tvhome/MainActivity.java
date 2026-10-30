@@ -477,7 +477,18 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             SharedPreferences sharinganPrefs = getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE);
             boolean showClock = sharinganPrefs.getBoolean("sharingan_show_clock", true);
             View leftBlock = findViewById(R.id.leftBlock);
-            if (leftBlock != null) leftBlock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+            if (leftBlock != null) {
+                leftBlock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+                leftBlock.setFocusable(true);
+                leftBlock.setOnClickListener(v -> startActivityForResult(
+                        new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST));
+            }
+            boolean keepAwake = sharinganPrefs.getBoolean("sharingan_keep_awake", true);
+            if (keepAwake) {
+                getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
         }
         wallpaperPlayer = new WallpaperPlayer(this, root, cfg);
         sky = findViewById(R.id.sky);
@@ -649,6 +660,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     AnimationUtils.loadAnimation(this, R.anim.tile_enter), 0.06f));
         }
         adapter = new AppAdapter(this, this, COLUMNS, cfg);
+        SharedPreferences sharinganInitPrefs = getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE);
+        adapter.setTileTransparency(sharinganInitPrefs.getInt("sharingan_tile_transparency", 2));
         adapter.setTileLaunchInterceptor((card, defaultLaunch) -> {
             if (sharinganView != null) {
                 Rect r = new Rect(0, 0, card.getWidth(), card.getHeight());
@@ -799,10 +812,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST);
             else open(systemIntent(Settings.ACTION_SETTINGS));
         });
+        btnSettings.setVisibility(View.GONE);
         btnReorder = findViewById(R.id.btnReorder);
         btnReorder.setOnClickListener(v -> toggleReorder());
         btnReorder.setVisibility(cfg.reorderButton ? View.VISIBLE : View.GONE);
-        if (!cfg.showNetworkPill) btnWifi.setVisibility(View.GONE);
+        btnWifi.setVisibility(View.GONE);
         showInputsPill = cfg.showInputsPill;
         showInputsMenuRow = cfg.showInputsPill;
         btnLibraryTop = findViewById(R.id.btnLibraryTop);
@@ -1049,7 +1063,24 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             SharedPreferences sharinganPrefs = getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE);
             boolean showClock = sharinganPrefs.getBoolean("sharingan_show_clock", true);
             View leftBlock = findViewById(R.id.leftBlock);
-            if (leftBlock != null) leftBlock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+            if (leftBlock != null) {
+                leftBlock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+                leftBlock.setFocusable(true);
+                leftBlock.setOnClickListener(v -> startActivityForResult(
+                        new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST));
+            }
+            boolean keepAwake = sharinganPrefs.getBoolean("sharingan_keep_awake", true);
+            if (keepAwake) {
+                getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            if (adapter != null) {
+                adapter.setTileTransparency(sharinganPrefs.getInt("sharingan_tile_transparency", 2));
+            }
+            if (btnWifi != null) btnWifi.setVisibility(View.GONE);
+            View btnSettings = findViewById(R.id.btnSettings);
+            if (btnSettings != null) btnSettings.setVisibility(View.GONE);
         }
         promptsPaused = false;
         if (grid.getAdapter() == null) grid.setAdapter(adapter);   // dropped by onTrimMemory
