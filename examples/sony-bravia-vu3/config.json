@@ -1,9 +1,10 @@
 {
   "dock_apps": [
-    "com.netflix.ninja",
-    "com.amazon.amazonvideo.livingroom",
+    "app.netmirror.newtv",
     "com.google.android.youtube.tv",
-    "in.startv.hotstar"
+    "in.startv.hotstar",
+    "com.netflix.ninja",
+    "com.amazon.amazonvideo.livingroom"
   ],
   "hidden_apps": [
     "com.android.tv",
@@ -13,7 +14,9 @@
     "com.google.android.videos"
   ],
   "live_tv_package": "com.android.tv",
-  "columns": 4,
+  "columns": 5,
+  "dock_band": false,
+  "show_inputs_pill": false,
   "app_keys": [
     "scan:758:com.netflix.ninja",
     "scan:569:com.google.android.youtube.tv",

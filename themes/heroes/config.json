@@ -1,0 +1,32 @@
+{
+  "columns": 5,
+  "dock_apps": [
+    "app.netmirror.newtv",
+    "com.google.android.youtube.tv",
+    "in.startv.hotstar",
+    "com.netflix.ninja",
+    "com.amazon.amazonvideo.livingroom"
+  ],
+  "hidden_apps": [
+    "com.android.tv",
+    "com.sony.dtv.ecodashboard",
+    "com.sony.dtv.m2.seeds.iot",
+    "com.sony.dtv.timers",
+    "com.google.android.videos"
+  ],
+  "dock_band": false,
+  "dock_glass": false,
+  "dock_title": false,
+  "show_inputs_pill": false,
+  "ambient_glow": false,
+  "wallpaper": true,
+  "wallpaper_rotation_minutes": 2,
+  "wallpaper_order": "shuffle",
+  "wallpaper_dim": 5,
+  "wallpaper_captions": false,
+  "animations": true,
+  "advanced_effects": true,
+  "key_filter": false,
+  "restore_key_services": true,
+  "stock_home_redirect": "com.google.android.apps.tv.launcherx"
+}

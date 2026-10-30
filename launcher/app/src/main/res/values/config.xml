@@ -17,10 +17,11 @@
 
     <!-- Apps pinned to the dock row at the bottom, in this order. Missing apps are skipped. -->
     <string-array name="dock_apps">
-        <item>com.netflix.ninja</item>
-        <item>com.amazon.amazonvideo.livingroom</item>
+        <item>app.netmirror.newtv</item>
         <item>com.google.android.youtube.tv</item>
         <item>in.startv.hotstar</item>
+        <item>com.netflix.ninja</item>
+        <item>com.amazon.amazonvideo.livingroom</item>
     </string-array>
     <!-- With fewer dock_apps than columns (or a dock app that is not installed), the free dock slots take
          the first grid apps, so the dock never shows a gap. false leaves them empty (#162); a theme can
@@ -29,12 +30,15 @@
 
     <!-- Apps never shown as tiles (e.g. the Live TV app, which the Inputs menu already covers). -->
     <string-array name="hidden_apps">
-        <item>com.mediatek.wwtv.tvcenter</item>
-        <item>com.mitv.gallery</item>
+        <item>com.android.tv</item>
+        <item>com.sony.dtv.ecodashboard</item>
+        <item>com.sony.dtv.m2.seeds.iot</item>
+        <item>com.sony.dtv.timers</item>
+        <item>com.google.android.videos</item>
     </string-array>
 
     <!-- The TV's Live TV / tuner app, offered at the end of the Inputs menu. Leave empty to omit. -->
-    <string name="live_tv_package" translatable="false">com.mediatek.wwtv.tvcenter</string>
+    <string name="live_tv_package" translatable="false">com.android.tv</string>
 
     <!-- Open the Live TV app above the first time Home comes up after the TV is switched on, for sets that are
          mostly used for broadcast TV. Once per boot: Home after that stays Home. Can also be set with
@@ -117,7 +121,7 @@
          "key_filter"). Some firmware (TCL Google TV on Android 12) drops key auto-repeat once ANY service
          filters keys, so long-pressing volume only steps once: set false and the service keeps running but
          stops filtering, which brings repeat back at the price of the remote buttons below doing nothing. -->
-    <bool name="key_filter">true</bool>
+    <bool name="key_filter">false</bool>
 
     <!-- With key_filter on, true makes HomeKeyService and InputKeyService stop filtering keys while a game
          controller is connected, so games see its buttons (Steam Link with an Xbox controller on a TCL G07
@@ -167,7 +171,7 @@
          off the enabled list. true: Home puts the helpers that were running back when it starts; one turned off in
          Settings stays off. Needs WRITE_SECURE_SETTINGS, which build-and-install grants with RESTORE_KEY_SERVICES=1
          (-RestoreKeyServices on Windows). Can also be set with "restore_key_services": true in a theme's config.json. -->
-    <bool name="restore_key_services">false</bool>
+    <bool name="restore_key_services">true</bool>
 
     <!-- More remote buttons that open the input switcher, by Android keycode (INPUT_KEY_SERVICE=1
          build-and-install.sh; KEYCODE_TV always does). For buttons only a disabled app answered: the Xiaomi
@@ -215,7 +219,7 @@
          com.xgimi.xrmservice does, on every one of its remote keys, power included (docs/TROUBLESHOOTING.md).
          Whenever that launcher's home screen comes up anyway, HomeKeyService (HOME_KEY_SERVICE=1) sends the TV
          straight back here. A theme's config.json can set it too. Leave empty to omit. -->
-    <string name="stock_home_redirect" translatable="false"></string>
+    <string name="stock_home_redirect" translatable="false">com.google.android.apps.tv.launcherx</string>
 
     <!-- For TVs whose firmware opens the Live TV app (live_tv_package) by itself at every power-on, with no setting
          to change it (Changhong / Homwee boards start com.mediatek.wwtv.tvcenter from its own boot receiver, which
@@ -286,7 +290,7 @@
          also be set with "dock_glass": true in a theme's config.json. -->
     <bool name="dock_glass">false</bool>
     <!-- Draw the dock band and its edge. false leaves the tiles floating on the wallpaper (config.xml dock_band). -->
-    <bool name="dock_band">true</bool>
+    <bool name="dock_band">false</bool>
     <!-- Every app in one row: the dock apps first, the rest after them, and the row scrolls sideways when focus
          reaches its edge. No grid below; rows_below_dock is ignored. Needs dock_row. Can also be set with
          "single_row" in a theme. -->
@@ -337,7 +341,7 @@
     </string-array>
     <!-- The Inputs pill in the top bar, shown when the TV has inputs to list. false hides it for good; what the
          remote's Input button does is unchanged. Can also be set with "show_inputs_pill" in a theme. -->
-    <bool name="show_inputs_pill">true</bool>
+    <bool name="show_inputs_pill">false</bool>
     <!-- The Inputs list shows only HDMI ports and CEC devices that report connected. Empty ports, devices asleep in
          standby (some TVs, TCL among them, report an empty HDMI port as connected-standby, the same state a
          sleeping device has) and the AV jacks fold behind a "More inputs" row that expands the rest. An HDMI row
@@ -376,7 +380,7 @@
 
     <!-- Tiles per row in the grid; the dock always has this many slots. Tiles are 180dp wide at 4 columns and
          shrink to fit from 5 up (about 144dp at 5, 117dp at 6 on a 1080p TV). -->
-    <integer name="columns">4</integer>
+    <integer name="columns">5</integer>
 
     <!-- Basic motion is on; advanced effects are opt-in in the launcher's own Settings screen. -->
     <bool name="animations">true</bool>

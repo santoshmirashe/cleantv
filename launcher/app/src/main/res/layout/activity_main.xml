@@ -217,6 +217,14 @@
                         android:letterSpacing="-0.04"
                         android:includeFontPadding="false" />
 
+                    <com.gathin.tvhome.RollingDialSecondsView
+                        android:id="@+id/dialSeconds"
+                        android:layout_width="42dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="4dp" />
+
                     <TextClock
                         android:id="@+id/ampm"
                         android:layout_width="wrap_content"
@@ -335,6 +343,7 @@
                 <TextView
                     android:id="@+id/btnInputs"
                     style="@style/TopButton"
+                    android:visibility="gone"
                     android:text="@string/inputs"
                     android:drawableStart="@drawable/ic_input"
                     android:nextFocusDown="@+id/grid" />
