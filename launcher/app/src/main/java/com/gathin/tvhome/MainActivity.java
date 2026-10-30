@@ -139,6 +139,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private AppAdapter adapter;
     private RecyclerView grid;
     private FrameLayout root;
+    private SharinganView sharinganView;
     private WallpaperPlayer wallpaperPlayer;
     private GlassView glass;
     private View ambient;
@@ -471,19 +472,23 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // black under it is a second full-screen fill on every frame for nothing. The starting window still uses
         // the theme's background, so launch looks the same.
         getWindow().setBackgroundDrawable(null);
+        sharinganView = findViewById(R.id.sharinganView);
+        if (sharinganView != null) {
+            SharedPreferences sharinganPrefs = getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE);
+            boolean showClock = sharinganPrefs.getBoolean("sharingan_show_clock", true);
+            View leftBlock = findViewById(R.id.leftBlock);
+            if (leftBlock != null) leftBlock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+        }
         wallpaperPlayer = new WallpaperPlayer(this, root, cfg);
         sky = findViewById(R.id.sky);
-        sky.setIntensity(cfg.skyIntensity);
+        sky.setIntensity(0); // Sharingan background takes precedence over sky
         glass = findViewById(R.id.glass);
         glass.setStyle(cfg.glassStyle);
-        if (festive) glass.setAccent(festival.accentColor());
+        glass.setAccent(0xFFDC143C); // Crimson Sharingan focus accent
         ambient = findViewById(R.id.ambient);
-        // The glow is one bitmap, so its alpha can be applied while drawing it. Otherwise every frame of
-        // a fade renders it into a full-screen offscreen buffer first.
-        ambient.forceHasOverlappingRendering(false);
-        ambientGlow = cfg.ambientGlow;
-        appGlow = cfg.appGlow;
-        if (!ambientGlow) ambient.setVisibility(View.GONE);
+        ambientGlow = false;
+        appGlow = false;
+        ambient.setVisibility(View.GONE);
         heroName = findViewById(R.id.heroName);
         hero = findViewById(R.id.hero);
         // The hero is now a group (name, and the cinematic lines): without this every fade of the default
@@ -644,6 +649,15 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                     AnimationUtils.loadAnimation(this, R.anim.tile_enter), 0.06f));
         }
         adapter = new AppAdapter(this, this, COLUMNS, cfg);
+        adapter.setTileLaunchInterceptor((card, defaultLaunch) -> {
+            if (sharinganView != null) {
+                Rect r = new Rect(0, 0, card.getWidth(), card.getHeight());
+                root.offsetDescendantRectToMyCoords(card, r);
+                sharinganView.performLaunchAnimation(r.exactCenterX(), r.exactCenterY(), defaultLaunch);
+            } else {
+                defaultLaunch.run();
+            }
+        });
         dockApps = cfg.dockApps;
         fillDockLeavesSlots = !cfg.fillDock;
         Order savedOrder = Order.load(Order.file(this));
@@ -883,6 +897,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalFocusChangeListener((oldF, newF) -> {
             boolean onTile = newF != null && newF.getId() == R.id.card;
             if (!onTile) hideGlass();
+            if (sharinganView != null && newF != null && newF.getWidth() > 0 && newF.getHeight() > 0) {
+                Rect r = new Rect(0, 0, newF.getWidth(), newF.getHeight());
+                root.offsetDescendantRectToMyCoords(newF, r);
+                sharinganView.setFocusTarget(r.exactCenterX(), r.exactCenterY());
+            }
         });
 
         packageFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
@@ -1024,6 +1043,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             return;
         }
         restartIdleClock();
+        if (sharinganView != null) {
+            sharinganView.resetLaunchState();
+            sharinganView.loadSettings(this);
+            SharedPreferences sharinganPrefs = getSharedPreferences(Config.SETTINGS_NAME, Context.MODE_PRIVATE);
+            boolean showClock = sharinganPrefs.getBoolean("sharingan_show_clock", true);
+            View leftBlock = findViewById(R.id.leftBlock);
+            if (leftBlock != null) leftBlock.setVisibility(showClock ? View.VISIBLE : View.GONE);
+        }
         promptsPaused = false;
         if (grid.getAdapter() == null) grid.setAdapter(adapter);   // dropped by onTrimMemory
         switch (tileRefresh.onResume(packagesChangedSinceRebuild())) {
@@ -1224,6 +1251,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     protected void onPause() {
         super.onPause();
         resumed = false;
+        if (sharinganView != null) {
+            sharinganView.stopBlinking();
+        }
         root.removeCallbacks(showIdleClock);
         endReorder();   // Home or another app while reordering keeps the order so far
         wallpaperPlayer.stop();
@@ -1733,11 +1763,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         glassCardW = card.getWidth();
         glassTargetX = x;
         glassTargetY = y;
-        // Cinematic shelf: the highlight glows in the dock app's colour, plain white in the grid (and on the dock with
-        // cinematic_white_focus). app_glow: every tile. In a single row every tile is the dock's kind.
-        boolean coloured = (appGlow || cinematic && !cinematicWhiteFocus && (singleRow || position < COLUMNS)) && !festive;
-        int accent = coloured ? adapter.ambientColorAt(position) : 0;
-        if ((cinematic || appGlow) && !festive && accent != glassAccent) {
+        if (sharinganView != null) {
+            sharinganView.setFocusTarget(r.exactCenterX(), r.exactCenterY());
+        }
+        // Crimson Sharingan focus glow
+        int accent = 0xFFDC143C;
+        if (accent != glassAccent) {
             glassAccent = accent;
             glass.setAccent(accent);
         }

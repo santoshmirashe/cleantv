@@ -507,7 +507,13 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             h.label.setText(e.label);
             h.label.setVisibility(uniformTiles ? View.GONE : View.VISIBLE);
         }
-        h.card.setOnClickListener(v -> launch(e));
+        h.card.setOnClickListener(v -> {
+            if (launchInterceptor != null) {
+                launchInterceptor.onTileLaunch(v, () -> launch(e));
+            } else {
+                launch(e);
+            }
+        });
         h.card.setOnLongClickListener(v -> {
             if (tileMenu) {
                 int pos = h.getBindingAdapterPosition();
@@ -673,8 +679,16 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return e.banner != null ? e.banner : e.icon;
     }
 
+    public interface TileLaunchInterceptor {
+        void onTileLaunch(View card, Runnable performLaunch);
+    }
+    private TileLaunchInterceptor launchInterceptor;
+    public void setTileLaunchInterceptor(TileLaunchInterceptor interceptor) {
+        this.launchInterceptor = interceptor;
+    }
+
     float focusScale() {
-        return !animations ? 1f : advancedEffects ? 1.12f : 1.10f;
+        return !animations ? 1f : 1.18f;
     }
 
     /** A vivid colour sampled from the app's banner (or icon), cached per entry; a card's accent when it set one. */

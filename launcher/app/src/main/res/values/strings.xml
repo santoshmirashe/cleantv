@@ -154,4 +154,26 @@
     <string name="last_opened">Last opened %1$s</string>
     <!-- game_day: a game on now, in the race panel. -->
     <string name="game_live">Live now</string>
+
+    <!-- Sharingan interactive settings -->
+    <string name="sharingan_section_title">Sharingan Experience</string>
+    <string name="sharingan_eye_tracking_state">Sharingan Eye Tracking: %1$s</string>
+    <string name="sharingan_blinking_state">Natural Blinking: %1$s</string>
+    <string name="sharingan_spotlight_state">Crimson Spotlight: %1$s</string>
+    <string name="sharingan_zoom_state">Cinematic Launch Zoom: %1$s</string>
+    <string name="sharingan_sensitivity_state">Eye Tracking Sensitivity: %1$s</string>
+    <string name="sharingan_spotlight_intensity_state">Spotlight Intensity: %1$s</string>
+    <string name="sharingan_clock_state">Clock &amp; Date: %1$s</string>
+    <string name="sharingan_sensitivity_label">Eye tracking sensitivity</string>
+    <string name="sharingan_spotlight_intensity_label">Spotlight intensity</string>
+    <string name="sensitivity_subtle">Subtle</string>
+    <string name="sensitivity_normal">Normal</string>
+    <string name="sensitivity_high">High</string>
+    <string name="intensity_subtle">Subtle</string>
+    <string name="intensity_medium">Medium</string>
+    <string name="intensity_high">High</string>
+    <string name="shown">Shown</string>
+    <string name="hidden">Hidden</string>
+    <string name="sharingan_reset_defaults">Reset Sharingan to Defaults</string>
+    <string name="sharingan_reset_applied">Sharingan settings reset to defaults</string>
 </resources>

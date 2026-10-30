@@ -33,6 +33,14 @@ public final class LauncherSettingsActivity extends Activity {
     private static final int[] DOCK_OPACITIES = {100, 70, 50, 30};
     private final TextView[] dockChoices = new TextView[DOCK_OPACITIES.length];
     private TextView wallpaperChoice;
+    private TextView sharinganEyeTrackingChoice;
+    private TextView sharinganBlinkingChoice;
+    private TextView sharinganSpotlightChoice;
+    private TextView sharinganZoomChoice;
+    private TextView sharinganSensitivityChoice;
+    private TextView sharinganSpotlightIntensityChoice;
+    private TextView sharinganClockChoice;
+    private TextView sharinganResetChoice;
     private TextView animationsChoice;
     private TextView advancedChoice;
     private TextView followThemeChoice;
@@ -42,6 +50,13 @@ public final class LauncherSettingsActivity extends Activity {
     private int dockOpacity;
     private boolean animations;
     private boolean advancedEffects;
+    private boolean sharinganEyeTracking;
+    private boolean sharinganBlinking;
+    private boolean sharinganSpotlight;
+    private boolean sharinganZoom;
+    private int sharinganSensitivity;
+    private int sharinganSpotlightIntensity;
+    private boolean sharinganClock;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -108,6 +123,93 @@ public final class LauncherSettingsActivity extends Activity {
         }
         wallpaperChoice = findViewById(R.id.wallpaperChoice);
         wallpaperChoice.setOnClickListener(v -> showWallpaperPicker());
+
+        sharinganEyeTracking = choices.getBoolean("sharingan_eye_tracking", true);
+        sharinganBlinking = choices.getBoolean("sharingan_blinking", true);
+        sharinganSpotlight = choices.getBoolean("sharingan_spotlight", true);
+        sharinganZoom = choices.getBoolean("sharingan_zoom_launch", true);
+        sharinganSensitivity = choices.getInt("sharingan_sensitivity", 2);
+        sharinganSpotlightIntensity = choices.getInt("sharingan_spotlight_intensity", 2);
+        sharinganClock = choices.getBoolean("sharingan_show_clock", true);
+
+        sharinganEyeTrackingChoice = findViewById(R.id.sharinganEyeTrackingChoice);
+        sharinganEyeTrackingChoice.setOnClickListener(v -> {
+            sharinganEyeTracking = !sharinganEyeTracking;
+            choices.edit().putBoolean("sharingan_eye_tracking", sharinganEyeTracking).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganBlinkingChoice = findViewById(R.id.sharinganBlinkingChoice);
+        sharinganBlinkingChoice.setOnClickListener(v -> {
+            sharinganBlinking = !sharinganBlinking;
+            choices.edit().putBoolean("sharingan_blinking", sharinganBlinking).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganSpotlightChoice = findViewById(R.id.sharinganSpotlightChoice);
+        sharinganSpotlightChoice.setOnClickListener(v -> {
+            sharinganSpotlight = !sharinganSpotlight;
+            choices.edit().putBoolean("sharingan_spotlight", sharinganSpotlight).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganZoomChoice = findViewById(R.id.sharinganZoomChoice);
+        sharinganZoomChoice.setOnClickListener(v -> {
+            sharinganZoom = !sharinganZoom;
+            choices.edit().putBoolean("sharingan_zoom_launch", sharinganZoom).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganSensitivityChoice = findViewById(R.id.sharinganSensitivityChoice);
+        sharinganSensitivityChoice.setOnClickListener(v -> {
+            sharinganSensitivity = (sharinganSensitivity % 3) + 1;
+            choices.edit().putInt("sharingan_sensitivity", sharinganSensitivity).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganSpotlightIntensityChoice = findViewById(R.id.sharinganSpotlightIntensityChoice);
+        sharinganSpotlightIntensityChoice.setOnClickListener(v -> {
+            sharinganSpotlightIntensity = (sharinganSpotlightIntensity % 3) + 1;
+            choices.edit().putInt("sharingan_spotlight_intensity", sharinganSpotlightIntensity).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganClockChoice = findViewById(R.id.sharinganClockChoice);
+        sharinganClockChoice.setOnClickListener(v -> {
+            sharinganClock = !sharinganClock;
+            choices.edit().putBoolean("sharingan_show_clock", sharinganClock).apply();
+            changed();
+            refresh();
+        });
+
+        sharinganResetChoice = findViewById(R.id.sharinganResetChoice);
+        sharinganResetChoice.setOnClickListener(v -> {
+            choices.edit()
+                    .putBoolean("sharingan_eye_tracking", true)
+                    .putBoolean("sharingan_blinking", true)
+                    .putBoolean("sharingan_spotlight", true)
+                    .putBoolean("sharingan_zoom_launch", true)
+                    .putInt("sharingan_sensitivity", 2)
+                    .putInt("sharingan_spotlight_intensity", 2)
+                    .putBoolean("sharingan_show_clock", true)
+                    .apply();
+            sharinganEyeTracking = true;
+            sharinganBlinking = true;
+            sharinganSpotlight = true;
+            sharinganZoom = true;
+            sharinganSensitivity = 2;
+            sharinganSpotlightIntensity = 2;
+            sharinganClock = true;
+            changed();
+            refresh();
+            Toast.makeText(this, R.string.sharingan_reset_applied, Toast.LENGTH_SHORT).show();
+        });
         animationsChoice = findViewById(R.id.animationsChoice);
         animationsChoice.setOnClickListener(v -> {
             animations = !animations;
@@ -297,6 +399,26 @@ public final class LauncherSettingsActivity extends Activity {
                 "none".equals(wallpaperCurrent) ? getString(R.string.wallpaper_none)
                         : wallpaperCurrent != null ? wallpaperCurrent
                         : getString(R.string.wallpaper_theme_default)));
+
+        sharinganEyeTrackingChoice.setText(getString(R.string.sharingan_eye_tracking_state,
+                getString(sharinganEyeTracking ? R.string.on : R.string.off)));
+        sharinganBlinkingChoice.setText(getString(R.string.sharingan_blinking_state,
+                getString(sharinganBlinking ? R.string.on : R.string.off)));
+        sharinganSpotlightChoice.setText(getString(R.string.sharingan_spotlight_state,
+                getString(sharinganSpotlight ? R.string.on : R.string.off)));
+        sharinganZoomChoice.setText(getString(R.string.sharingan_zoom_state,
+                getString(sharinganZoom ? R.string.on : R.string.off)));
+
+        String sensLabel = sharinganSensitivity == 3 ? getString(R.string.sensitivity_high)
+                : (sharinganSensitivity == 1 ? getString(R.string.sensitivity_subtle) : getString(R.string.sensitivity_normal));
+        sharinganSensitivityChoice.setText(getString(R.string.sharingan_sensitivity_state, sensLabel));
+
+        String spotLabel = sharinganSpotlightIntensity == 3 ? getString(R.string.intensity_high)
+                : (sharinganSpotlightIntensity == 1 ? getString(R.string.intensity_subtle) : getString(R.string.intensity_medium));
+        sharinganSpotlightIntensityChoice.setText(getString(R.string.sharingan_spotlight_intensity_state, spotLabel));
+
+        sharinganClockChoice.setText(getString(R.string.sharingan_clock_state,
+                getString(sharinganClock ? R.string.shown : R.string.hidden)));
         openOnStartChoice.setText(getString(R.string.open_on_start_state, openOnStartLabel()));
         followThemeChoice.setSelected(!hasOnTvChoices());
     }

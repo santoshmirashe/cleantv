@@ -5,11 +5,19 @@
     android:layout_height="match_parent"
     android:background="#FF000000">
 
+    <!-- Interactive Sharingan wallpaper and eye tracking engine -->
+    <com.gathin.tvhome.SharinganView
+        android:id="@+id/sharinganView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no" />
+
     <!-- Time-of-day backdrop, drawn once a minute (config.xml sky_intensity; 0 keeps it hidden). -->
     <com.gathin.tvhome.SkyView
         android:id="@+id/sky"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:importantForAccessibility="no" />
 
     <!-- Cinematic top shelf (cinematic_home): the focused dock app's artwork, a few pixels across and
@@ -28,6 +36,7 @@
         android:id="@+id/ambient"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:alpha="0" />
 
     <!-- Race-weekend panel (a theme's race_calendar, see RaceWeekend): in the free space under the clock,
